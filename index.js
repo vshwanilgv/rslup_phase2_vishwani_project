@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const PORT = process.env.PORT || 3000;
 
+const nodemailer = require('nodemailer');
+
 app.use(bodyParser.json());
 
 const users = [
@@ -77,14 +79,43 @@ app.post('/login', (req, res) => {
 
 
 
-app.get('/flights', (req, res) => {
+/*app.get('/flights', (req, res) => {
  
 });
 
 app.post('/flights', (req, res) => {
   
+});*/
+
+
+// Send email to user
+
+// Create a nodemailer transporter 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'your-email@gmail.com',
+    pass: 'your-email-password',
+  },
 });
 
+// Dummy endpoint for Forgot Password
+app.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+
+  // Create a password reset link
+  const resetLink = 'https://your-app.com/reset-password?token=your-reset-token';
+
+  // Send email with reset link
+  transporter.sendMail({
+    from: 'your-email@gmail.com',
+    to: email,
+    subject: 'Password Reset',
+    text: `Click the following link to reset your password: ${resetLink}`,
+  });
+
+  res.json({ message: 'Password reset email sent successfully' });
+});
 
 
 app.listen(PORT, () => {
